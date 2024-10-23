@@ -46,6 +46,21 @@
       <ion-note slot="end"></ion-note>
     </ion-item>
 
+    <ion-item >
+      
+      <span type="button" (click)="nextPageListado(asignatura.algoritmos)"> 
+      <ion-label >
+        <h2>{{nombreAsig}}</h2>
+
+        <p>{{codigoAsig}} - {{seccion.diurno2}}</p>
+      </ion-label>
+      </span>
+
+      <ion-icon type="button" (click)="nextPageListado(asignatura.algoritmos)" color="success" slot="start" name="list-circle" size="large">Lista</ion-icon>
+  
+      <ion-icon type="button" (click)="nextPageQR(asignatura.algoritmos, sigla.algoritmos, seccion.diurno2)" color="primary" slot="end" name="qr-code-outline" size="large"> </ion-icon>
+    </ion-item>
+
   </ion-list>
 
 </ion-content>

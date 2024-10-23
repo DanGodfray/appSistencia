@@ -15,9 +15,10 @@ export class AlumnoPage implements OnInit {
   scannedResult: any; //Variable para guardar el resultado del escaneo
   //incompleto
 
+  
   constructor(private activeroute: ActivatedRoute, private router: Router) {
 
-    this.activeroute.queryParams.subscribe(params => {
+    this.activeroute.queryParams.subscribe(params => { //Se obtienen los datos del usuario que se envian desde la pagina de login 
       console.log( this.router.getCurrentNavigation()?.extras.state?.['id']);
       console.log(this.router.getCurrentNavigation()?.extras.state?.['user']);
   
