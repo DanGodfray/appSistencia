@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import {formatDate} from '@angular/common';
+import { ConsumoApiService } from 'src/app/service/consumo-api.service';
 
 
 @Component({
@@ -10,55 +11,105 @@ import {formatDate} from '@angular/common';
 })
 export class QrAsignaturaPage implements OnInit {
 
-  tituloAsigDoc = "" //Variable para guardar el titulo de la asignatura seleccionada
-  tituloSiglDoc = "" //Variable para guardar la sigla de la asignatura seleccionada
-  objAlumnos: string[] = []; //Variable para guardar la lista de alumnos
+  idCurso = 0; //Variable para guardar el id del curso seleccionado
+  nombreAsigDoc = ""; //Variable para guardar el nombre de la asignatura seleccionada
+  codigoAsigDoc = ""; //Variable para guardar el codigo de la asignatura seleccionada
+  seccionAsigDoc = ""; //Variable para guardar la seccion de la asignatura seleccionada
 
   qrCodeString = "" //Variable para guardar el texto del codigo QR
   //se debe instalar posteriormente: npm i angularx-qrcode
 
+  cursosApi : any[] = [];
+
   fechaHoy = formatDate(new Date(), 'dd/MM/yyyy', 'en')
 
-  constructor(private activeroute: ActivatedRoute, private router: Router) { 
+  constructor(private consumoApi: ConsumoApiService ,private activeroute: ActivatedRoute, private router: Router) { 
 
-    this.activeroute.queryParams.subscribe(params => { //Se recibe la asignatura seleccionada de la pagina anterior
+    this.idCurso = this.router.getCurrentNavigation()?.extras.state?.['idCur'];
+    console.log("id curso: "+this.router.getCurrentNavigation()?.extras.state?.['idCur']);
 
-      this.tituloAsigDoc = this.router.getCurrentNavigation()?.extras.state?.['tituloAsig']; //Se recibe la asignatura seleccionada de la pagina anterior
-      
-      this.tituloSiglDoc = this.router.getCurrentNavigation()?.extras.state?.['tituloSeccion']; //Se recibe la asignatura seleccionada de la pagina anterior
+    this.nombreAsigDoc = this.router.getCurrentNavigation()?.extras.state?.['nomAsig'];
+    console.log("nombre de la asignatura: "+this.router.getCurrentNavigation()?.extras.state?.['nomAsig']);
 
-      console.log(this.router.getCurrentNavigation()?.extras.state?.['tituloSeccion']);
-      console.log(this.router.getCurrentNavigation()?.extras.state?.['qrCodeString']);
+    this.codigoAsigDoc = this.router.getCurrentNavigation()?.extras.state?.['codAsig'];
+    console.log("codigo de la asignatura: "+this.router.getCurrentNavigation()?.extras.state?.['codAsig']);
 
-      this.qrCodeString = this.tituloAsigDoc + " " + this.tituloSiglDoc +" "+ this.fechaHoy; //Se crea el texto del codigo QR incluye la fecha actual
-
-      const alumnosObj = this.router.getCurrentNavigation()?.extras.state?.['alum']; //Se recibe el arreglo de alumnos de la pagina anterior
-      this.objAlumnos = Object.values(alumnosObj); //Se convierte el objeto de alumnos en un arreglo de valores
-      
-      console.log(this.objAlumnos); //Se imprime el arreglo de alumnos
-
-      
-    });   
+    this.seccionAsigDoc = this.router.getCurrentNavigation()?.extras.state?.['seccAsig'];
+    console.log("seccion de la asignatura: "+this.router.getCurrentNavigation()?.extras.state?.['seccAsig']);  
 
   }
 
   ngOnInit() {
+    this.mostrarQR();
+    this.getPostCursosProfesor();
   }
 
-  nextPageListado(asignaturaSeleccionada: string){
+  
+
+  getPostCursosProfesor() { //Funcion para obtener los cursos del profesor
+
+    this.consumoApi.getPostCursosProfesor(1).subscribe((response)=>{
+      console.log("esto es un ejemplo de getPostCursosProfesor "+response);
+
+      this.cursosApi = response;
+      
+    }); //Se retorna los cursos del profesor
+  }
+
+  mostrarQR(){
+    this.activeroute.queryParams.subscribe(params => { //Se recibe la asignatura seleccionada de la pagina anterior
+
+      console.log(this.router.getCurrentNavigation()?.extras.state?.['idCur']);
+      //console.log(this.router.getCurrentNavigation()?.extras.state?.['qrCodeString']);
+
+      this.qrCodeString = this.idCurso+" "+this.nombreAsigDoc + " " + this.codigoAsigDoc +" "+ this.seccionAsigDoc +" "+ this.fechaHoy; //Se crea el texto del codigo QR incluye la fecha actual
+      
+      console.log(this.qrCodeString); //Se imprime el arreglo de alumnos
+
+      
+    }); 
+  }
+
+  nextPageListado(nombreAsignaturaSeleccionada: string, codigoAsignaturaSeleccionada: string, seccionAsignatura: string,idCursoSeleccionado: number){
 
     let setData: NavigationExtras = { //Se envia la asignatura seleccionada a la siguiente pagina
-  
       state: {
+        nomAsig: nombreAsignaturaSeleccionada, //Se envia la asignatura seleccionada por id(asig) del html
+        codAsig: codigoAsignaturaSeleccionada,
+        seccAsig: seccionAsignatura,
    
-       asig: asignaturaSeleccionada, //Se envia la asignatura seleccionada por id(asig) del html
-   
-       alum: this.objAlumnos //Se envia el arreglo de alumnos
+         //alum: this.alumnos, //Se envia el arreglo de alumnos
+        idCur: idCursoSeleccionado, //Se envia el arreglo de alumnos
+        
+
       }
    
      };
 
-    this.router.navigate(['docente/listado'],setData); //Se envia la asignatura seleccionada a la siguiente pagina
+    this.router.navigate(['docente/listado'],setData);
+  }
+
+  goBackListado(nombreAsignaturaSeleccionada: string, codigoAsignaturaSeleccionada: string, seccionAsignatura: string,idCursoSeleccionado: number){
+
+    let setData: NavigationExtras = { //Se envia la asignatura seleccionada a la siguiente pagina
+      state: {
+        nomAsig: nombreAsignaturaSeleccionada, //Se envia la asignatura seleccionada por id(asig) del html
+        codAsig: codigoAsignaturaSeleccionada,
+        seccAsig: seccionAsignatura,
+   
+         //alum: this.alumnos, //Se envia el arreglo de alumnos
+        idCur: idCursoSeleccionado, //Se envia el arreglo de alumnos
+        
+
+      }
+   
+     };
+
+    if (this.router.url.includes('docente/listado'), setData) {
+      this.router.navigate(['docente'],setData);
+      
+    }
+    //this.router.navigate(['docente/listado'],setData);
   }
 
 }

@@ -1,6 +1,7 @@
 import { query } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { ConsumoApiService } from 'src/app/service/consumo-api.service';
 
 @Component({
@@ -11,17 +12,11 @@ import { ConsumoApiService } from 'src/app/service/consumo-api.service';
 export class DocentePage implements OnInit {
 
   message = "";
-  nombreAsig = "";
+  nombreAsig = ""; //Variable para almacenar el nombre de la asignatura seleccionada por el docente en la api 
   codigoAsig = "";
   seccionAsig = "";
 
-  asignatura = {"estadistica": "Estadistica Descriptiva", "etica": "Etica Laboral", "algebra": "Algebra y trigonometria", "algoritmos": "Programacion de algoritmos"} //Asignaturas disponibles para el alumno en un arreglo
-
-  sigla = {"estadistica": "EST", "etica": "ETI", "algebra": "ALG", "algoritmos": "ALG"} //Siglas de las asignaturas disponibles para el alumno en un arreglo
-
-  seccion = {"diurno1": "100", "diurno2": "200", "vespertino1": "300", "vespertino2": "400"} //Secciones de las asignaturas disponibles para el alumno en un arreglo
-
-  alumnos = {"a1":"Acevedo Sanchez Luis Mario","a2":"Aguilar Lopez Juan Carlos", "a3":"Alvarez Perez Maria Guadalu"}
+  cursosApi : any[] = []; //Variable para almacenar los cursos del profesor
 
   user = "";
   pass = "";
@@ -29,46 +24,47 @@ export class DocentePage implements OnInit {
   constructor(private consumoApi:ConsumoApiService ,private activeroute: ActivatedRoute, private router: Router) { 
 
     this.activeroute.queryParams.subscribe(params => {
-      this.user = this.router.getCurrentNavigation()?.extras.state?.['id'];
-      this.pass = this.router.getCurrentNavigation()?.extras.state?.['user'];
-      console.log( this.router.getCurrentNavigation()?.extras.state?.['id']);
-      console.log(this.router.getCurrentNavigation()?.extras.state?.['user']);
-
-      console.log("la variable user contiene: "+ this.user);
+      if (this.router.getCurrentNavigation()?.extras.state) {
+        this.user = this.router.getCurrentNavigation()?.extras.state?.['id'];
+        this.pass = this.router.getCurrentNavigation()?.extras.state?.['user'];
+        console.log("id: "+ this.router.getCurrentNavigation()?.extras.state?.['id']);
+        console.log("user: "+ this.router.getCurrentNavigation()?.extras.state?.['user']);
+        console.log("pass: "+ this.router.getCurrentNavigation()?.extras.state?.['pass']);
+      }
+      
   
     });
   }
 
   ngOnInit() {
-    this.mosrarDatosApi(); //Se llama a la funcion para mostrar los datos de la api
+    //this.mosrarDatosApi(); //Se llama a la funcion para mostrar los datos de la api
 
+    this.getPostCursosProfesor(); //Se llama a la funcion para obtener los cursos del profesor
   }
 
-  /** 
-  mosrarDatosApiEj(){ //Funcion para mostrar los datos de la api
+  getPostCursosProfesor() { //Funcion para obtener los cursos del profesor
 
-    this.consumoApi.getPosts().subscribe((res) => { //Se obtienen los datos de la api
-      this.message =' '+ res[0].title; //Se muestra un mensaje
-      console.log(res); //Se muestran los datos en la consola
+    this.consumoApi.getPostCursosProfesor(1).subscribe((response)=>{
+      console.log("esto es un ejemplo de getPostCursosProfesor "+response);
 
-    },(error) => { //En caso de error
-      console.error(error); //Se muestra el error en la consola
-      this.message = "Error al obtener los datos de la api"; //Se muestra un mensaje
-    });
-
+      this.cursosApi = response;
+      
+    }); //Se retorna los cursos del profesor
   }
-  */
+
   mosrarDatosApi(){ //Funcion para mostrar los datos de la api
 
-    this.consumoApi.getPostsCursos(1).subscribe((res) => { //Se obtienen los datos de la api
+    this.consumoApi.getPostCursosProfesor(1).subscribe((res) => { //Se obtienen los datos de la api
       this.message =' '+ res[0]; //Se muestra un mensaje
       console.log("Los objetos de la api son: "+res); //Se muestran los datos en la consola
       console.log("Los objetos de la api son nombre asignatura: "+res.nombre); //Se muestran los datos en la consola
 
       for (let i = 0; i < res.length; i++) {
-        console.log("Nombre de la asignatura: " + res[i].nombre);
+        console.log("Nombre de la asignatura "+ [i+1] +": " + res[i].nombre);
         //this.nombreAsig = res[i].nombre;
       }
+
+      //debbuging de pruebas
 
       console.log("Nombre de la asignatura a rellenar: " + res[0].nombre);
       this.nombreAsig = res[0].nombre;
@@ -79,6 +75,8 @@ export class DocentePage implements OnInit {
       console.log("Seccion de la asignatura a rellenar: " + res[0].seccion);
       this.seccionAsig = res[0].seccion;
 
+      //fin del debbugin de pruebas
+
 
     },(error) => { //En caso de error
       console.error(error); //Se muestra el error en la consola
@@ -87,14 +85,17 @@ export class DocentePage implements OnInit {
 
   }
 
-  nextPageListado(asignaturaSeleccionada: string){
+  nextPageListado(nombreAsignaturaSeleccionada: string, codigoAsignaturaSeleccionada: string, seccionAsignatura: string,idCursoSeleccionado: number){
 
     let setData: NavigationExtras = { //Se envia la asignatura seleccionada a la siguiente pagina
       state: {
-       asig: asignaturaSeleccionada, //Se envia la asignatura seleccionada por id(asig) del html
+        nomAsig: nombreAsignaturaSeleccionada, //Se envia la asignatura seleccionada por id(asig) del html
+        codAsig: codigoAsignaturaSeleccionada,
+        seccAsig: seccionAsignatura,
    
-       alum: this.alumnos, //Se envia el arreglo de alumnos
-
+         //alum: this.alumnos, //Se envia el arreglo de alumnos
+        idCur: idCursoSeleccionado, //Se envia el arreglo de alumnos
+        
       }
    
      };
@@ -102,15 +103,15 @@ export class DocentePage implements OnInit {
     this.router.navigate(['docente/listado'],setData);
   }
 
-  nextPageQR(asignatura: string, sigla: string, seccion: string){ 
+  nextPageQR(nombreAsignaturaSeleccionada: string, codigoAsignaturaSeleccionada: string, seccionAsignatura: string,idCursoSeleccionado: number){
 
     let setData: NavigationExtras = { //Se envia la asignatura seleccionada a la siguiente pagina
       state: {
-        tituloAsig: asignatura, //Se envia la asignatura seleccionada por id(asig) del html
-        tituloSeccion: sigla + seccion, //Se envia la asignatura seleccionada por id(asig) del html, la sigla y la seccion
-
-        alum: this.alumnos, //Se envia el arreglo de alumnos
-   
+        nomAsig: nombreAsignaturaSeleccionada, //Se envia la asignatura seleccionada por id(asig) del html
+        codAsig: codigoAsignaturaSeleccionada,
+        seccAsig: seccionAsignatura,
+        idCur: idCursoSeleccionado, //Se envia el arreglo de alumnos
+        
       }
    
      };

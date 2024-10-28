@@ -44,8 +44,10 @@ export class LoginPage implements OnInit {
   
      state: { //Estructura de los datos a enviar
   
-      id: this.usuario.value.user, // formControlName: 'user'
-      user: this.usuario.value.pass // formControlName: 'pass'
+      id: this.usuario.value.user, // se debe reemplazar por el id real del usuario logueado
+
+      user: this.usuario.value.user, // formControlName: 'pass'
+      pass: this.usuario.value.pass // formControlName: 'pass'
   
      }
   

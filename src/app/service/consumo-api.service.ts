@@ -37,14 +37,14 @@ export class ConsumoApiService {
     );
   }
 
-  getPostsCursos(id:number):Observable<any>{ // creamos un método que nos devuelva los posts de la api de profesores y alumnos
-    return this.http.get(this.apiUrl+'/profesores/'+id+'/cursos').pipe(
+  public getPostCursosProfesor(idProf:number):Observable<any>{ // creamos un método que nos devuelva los posts de la api de profesores y alumnos
+    return this.http.get(this.apiUrl+'/profesores/'+idProf+'/cursos', this.httpOptions).pipe(
       retry(3)
     );
   }
 
-  getPostsAlumnos(id:number):Observable<any>{ // creamos un método que nos devuelva los posts de la api de profesores y alumnos
-    return this.http.get(this.apiUrl+'/profesores/'+id+'/cursos').pipe(
+  getPostsAlumnosCurso(idProf:number,idCurso:number):Observable<any>{ // creamos un método que nos devuelva los posts de la api de profesores y alumnos
+    return this.http.get(this.apiUrl+'/profesores/'+idProf+'/cursos/'+idCurso+'/alumnos').pipe(
       retry(3)
     );
   }

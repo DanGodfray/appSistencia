@@ -5,6 +5,10 @@
       <ion-back-button (click)="goBackPerfilDocente()"></ion-back-button>
     </ion-buttons>
 
+    <ion-buttons slot="end">
+      <ion-icon type="button" (click)="nextPageQR(nombreAsigDoc, codigoAsigDoc, seccionAsigDoc,idCurso)" color="secondary" slot="end" name="qr-code-outline" size="large"> </ion-icon>
+    </ion-buttons>
+
     <ion-title>listado</ion-title>
 
     
@@ -16,18 +20,23 @@
   <ion-item color="primary">
 
     <ion-label style="text-align: center;">
-      <h1 id="asig">{{tituloAsigDoc}}</h1>
-      <h1></h1>
-      <p></p>
+      <h1 >{{nombreAsigDoc}}</h1>
+      <h2> {{codigoAsigDoc}} - {{seccionAsigDoc}} </h2>
+   
     </ion-label>
+
+    
 
   </ion-item>
 
   <ion-list>
     <!-- Usamos *ngFor para recorrer y mostrar los alumnos -->
-    <ion-item *ngFor="let alumno of objAlumnos">
-      <ion-label>{{alumno}}</ion-label>
-      <ion-checkbox checked="true" slot="end">Presente</ion-checkbox>
+    <ion-item *ngFor="let alumno of alumnos">
+      <ion-label>{{alumno.nombre}}
+        <p>{{alumno.id}}</p>
+      </ion-label>
+      
+      <ion-checkbox [checked]="alumno.status === 1" slot="end">Presente</ion-checkbox>
     </ion-item>
   </ion-list>
 

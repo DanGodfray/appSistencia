@@ -3,7 +3,7 @@
     <ion-title>QR Asistencia</ion-title>
 
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button (click)="goBackListado(nombreAsigDoc, codigoAsigDoc, seccionAsigDoc,idCurso)">QR</ion-back-button>
     </ion-buttons>
 
   </ion-toolbar>
@@ -14,8 +14,8 @@
   <ion-item color="primary">
 
     <ion-label style="text-align: center;">
-      <h1 id="tituloAsig">{{tituloAsigDoc}}</h1>
-      <h2 id="tituloSeccion">{{tituloSiglDoc}} - {{fechaHoy}}</h2>
+      <h1 id="tituloAsig">{{nombreAsigDoc}}</h1>
+      <h2 id="tituloSeccion">{{codigoAsigDoc}}-{{seccionAsigDoc}} | {{fechaHoy}}</h2>
       <p></p>
     </ion-label>
 
@@ -43,12 +43,12 @@
 
     </ion-card-header>
   
-    <ion-card-content style="align-items: center;">
+    <ion-card-content style="align-items: center;" >
 
-        <ion-button style="text-align: center;"
+        <ion-button style="text-align: center; " 
           expand="block" 
           color="primary"
-          (click)="nextPageListado(tituloAsigDoc)">Ver diligentes
+          (click)="nextPageListado(nombreAsigDoc, codigoAsigDoc, seccionAsigDoc,idCurso)">Ver diligentes
     
         </ion-button> 
 
