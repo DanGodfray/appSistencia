@@ -58,7 +58,7 @@ export class ListadoPage implements OnInit {
     });   
   }
 
-  mostrarDatosAlumnos(){
+  mostrarDatosAlumnos(){ //Funcion para mostrar los datos de los alumnos del curso seleccionado
     
     this.idCurso = this.router.getCurrentNavigation()?.extras.state?.['idCur']; //Se recibe la asignatura seleccionada de la pagina anterior
 
