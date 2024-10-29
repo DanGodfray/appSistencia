@@ -21,6 +21,7 @@ export class AlumnoPage implements OnInit {
     this.activeroute.queryParams.subscribe(params => { //Se obtienen los datos del usuario que se envian desde la pagina de login 
       console.log( this.router.getCurrentNavigation()?.extras.state?.['id']);
       console.log(this.router.getCurrentNavigation()?.extras.state?.['user']);
+      console.log(this.router.getCurrentNavigation()?.extras.state?.['pass']);
   
     });
   

@@ -18,18 +18,31 @@ export class DocentePage implements OnInit {
 
   cursosApi : any[] = []; //Variable para almacenar los cursos del profesor
 
-  user = "";
-  pass = "";
+  idDoc = 0;
+  userDoc = "";
+  passDoc = "";
+  nomDoc = "";
+  perfDoc = 0;
+  mailDoc = "";
 
   constructor(private consumoApi:ConsumoApiService ,private activeroute: ActivatedRoute, private router: Router) { 
 
     this.activeroute.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation()?.extras.state) {
-        this.user = this.router.getCurrentNavigation()?.extras.state?.['id'];
-        this.pass = this.router.getCurrentNavigation()?.extras.state?.['user'];
+
+        this.idDoc = this.router.getCurrentNavigation()?.extras.state?.['id'];
+        this.userDoc = this.router.getCurrentNavigation()?.extras.state?.['user'];
+        this.passDoc = this.router.getCurrentNavigation()?.extras.state?.['password'];
+        this.nomDoc = this.router.getCurrentNavigation()?.extras.state?.['nombre'];
+        this.perfDoc = this.router.getCurrentNavigation()?.extras.state?.['perfil'];
+        this.mailDoc = this.router.getCurrentNavigation()?.extras.state?.['correo'];
+        //debugeo de pruebas console.log
         console.log("id: "+ this.router.getCurrentNavigation()?.extras.state?.['id']);
         console.log("user: "+ this.router.getCurrentNavigation()?.extras.state?.['user']);
-        console.log("pass: "+ this.router.getCurrentNavigation()?.extras.state?.['pass']);
+        console.log("password: "+ this.router.getCurrentNavigation()?.extras.state?.['password']);
+        console.log("nombre: "+ this.router.getCurrentNavigation()?.extras.state?.['nombre']);
+        console.log("perfil: "+ this.router.getCurrentNavigation()?.extras.state?.['perfil']);
+        console.log("correo: "+ this.router.getCurrentNavigation()?.extras.state?.['correo']);
       }
       
   
@@ -44,7 +57,7 @@ export class DocentePage implements OnInit {
 
   getPostCursosProfesor() { //Funcion para obtener los cursos del profesor
 
-    this.consumoApi.getPostCursosProfesor(1).subscribe((response)=>{
+    this.consumoApi.getPostCursosProfesor(this.perfDoc).subscribe((response)=>{
       console.log("esto es un ejemplo de getPostCursosProfesor "+response);
 
       this.cursosApi = response;

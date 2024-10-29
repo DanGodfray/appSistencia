@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient,HttpHeaders,HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable,throwError } from 'rxjs';
 import { retry,catchError } from 'rxjs/operators';
 
 // se debe installar flask-cors previamente para el servidor flask de api python
@@ -49,4 +49,16 @@ export class ConsumoApiService {
     );
   }
 
+  getPostLogin(user: string, password: string): Observable<any> {
+    const url = `${this.apiUrl}/login`;
+    const body = { user, password };
+    return this.http.post(url, body, this.httpOptions).pipe(
+      retry(3),
+
+      catchError((error) => {
+        console.error('Error en login:', error);
+        return throwError(error);
+      })
+    );
+  }
 }
